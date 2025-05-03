@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Formatter for Code Snippet</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      background-color: #fff;
+      font-size: 12px;
+      overflow: hidden;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    label {
+      font-weight: 500;
+    }
+    
+    input {
+      border: 1px solid #e2e2e2;
+      border-radius: 2px;
+      padding: 8px;
+      font-size: 12px;
+    }
+    
+    button {
+      background-color: #18a0fb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    button:hover {
+      background-color: #0d8ce0;
+    }
+    
+    .footer {
+      margin-top: 12px;
+      font-size: 11px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="input-group">
+      <label for="prefix">CSS	pn×ìÕ£Ã¯¹:</label>
+      <input type="text" id="prefix" placeholder="‹: app" />
+    </div>
+    <button id="apply">i(</button>
+    <div class="footer">
+      CSS	pvar(--color-name, #000)	kšW_×ìÕ£Ã¯¹’ý W~Y
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('apply').addEventListener('click', () => {
+      const prefix = document.getElementById('prefix').value.trim();
+      parent.postMessage({ pluginMessage: { type: 'apply-prefix', prefix } }, '*');
+    });
+
+    // FigmaK‰áÃ»ü¸’×QÖ‹
+    window.onmessage = (event) => {
+      const message = event.data.pluginMessage;
+      if (message.type === 'init') {
+        // ÝXUŒ_×ìÕ£Ã¯¹LB‹4o-š
+        if (message.savedPrefix) {
+          document.getElementById('prefix').value = message.savedPrefix;
+        }
+      }
+    };
+  </script>
+</body>
+</html>

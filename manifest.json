@@ -1,0 +1,26 @@
+{
+  "name": "CSS Formatter for Code Snippet",
+  "id": "1500316933209156110",
+  "api": "1.0.0",
+  "main": "dist/main.js",
+  "capabilities": [
+    "codegen"
+  ],
+  "enableProposedApi": false,
+  "documentAccess": "dynamic-page",
+  "editorType": [
+    "dev"
+  ],
+  "ui": "ui.html",
+  "codegenLanguages": [
+    {
+      "label": "CSS with prefix",
+      "value": "css-with-prefix"
+    }
+  ],
+  "networkAccess": {
+    "allowedDomains": [
+      "none"
+    ]
+  }
+}
