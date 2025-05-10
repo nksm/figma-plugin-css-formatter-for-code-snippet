@@ -14,30 +14,30 @@
       font-size: 12px;
       overflow: hidden;
     }
-    
+
     .container {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
-    
+
     .input-group {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
-    
+
     label {
       font-weight: 500;
     }
-    
+
     input {
       border: 1px solid #e2e2e2;
       border-radius: 2px;
       padding: 8px;
       font-size: 12px;
     }
-    
+
     button {
       background-color: #18a0fb;
       color: white;
@@ -48,15 +48,46 @@
       cursor: pointer;
       transition: background-color 0.2s;
     }
-    
+
     button:hover {
       background-color: #0d8ce0;
     }
-    
+
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
     .footer {
       margin-top: 12px;
       font-size: 11px;
       color: #888;
+    }
+
+    .status {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #333;
+      min-height: 16px;
+    }
+
+    .example {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #666;
+      font-family: monospace;
+      background-color: #f5f5f5;
+      padding: 8px;
+      border-radius: 4px;
+      display: none;
+    }
+
+    .error {
+      color: #e53935;
+    }
+
+    .success {
+      color: #43a047;
     }
   </style>
 </head>
@@ -64,18 +95,79 @@
   <div class="container">
     <div class="input-group">
       <label for="prefix">CSS変数のプレフィックス:</label>
-      <input type="text" id="prefix" placeholder="例: app" />
+      <input type="text" id="prefix" placeholder="例: ds" />
+    </div>
+    <div class="status" id="status"></div>
+    <div class="example" id="example">
+      変換例: var(--color-text, #000) → var(--<span id="example-prefix">ds</span>-color-text, #000)
     </div>
     <button id="apply">適用</button>
     <div class="footer">
-      CSS変数（var(--color-name, #000)）に指定したプレフィックスを追加します
+      CSS変数（var(--color-name, #000)）に指定したプレフィックスを追加します。空のプレフィックスを設定するとプレフィックスは追加されません。
     </div>
   </div>
 
   <script>
-    document.getElementById('apply').addEventListener('click', () => {
-      const prefix = document.getElementById('prefix').value.trim();
+    const prefixInput = document.getElementById('prefix');
+    const applyButton = document.getElementById('apply');
+    const statusElement = document.getElementById('status');
+    const exampleElement = document.getElementById('example');
+    const examplePrefixElement = document.getElementById('example-prefix');
+
+    // プレフィックス入力時のリアルタイムバリデーション
+    prefixInput.addEventListener('input', () => {
+      const prefix = prefixInput.value.trim();
+
+      // 無効な文字が含まれていないか確認
+      const invalidChars = prefix.match(/[^a-zA-Z0-9\-]/g);
+
+      if (invalidChars) {
+        statusElement.textContent = `エラー: 無効な文字が含まれています: ${invalidChars.join(' ')}`;
+        statusElement.className = 'status error';
+        applyButton.disabled = true;
+        exampleElement.style.display = 'none';
+      } else {
+        statusElement.textContent = '';
+        statusElement.className = 'status';
+        applyButton.disabled = false;
+
+        // プレビュー例を表示
+        if (prefix) {
+          examplePrefixElement.textContent = prefix;
+          exampleElement.style.display = 'block';
+        } else {
+          exampleElement.style.display = 'none';
+        }
+      }
+    });
+
+    // 適用ボタンのクリックイベント
+    applyButton.addEventListener('click', () => {
+      const prefix = prefixInput.value.trim();
+
+      // ボタンを無効化して連打を防止
+      applyButton.disabled = true;
+      applyButton.textContent = '適用中...';
+
+      // Figmaにメッセージを送信
       parent.postMessage({ pluginMessage: { type: 'apply-prefix', prefix } }, '*');
+
+      // 成功メッセージを表示
+      statusElement.textContent = `プレフィックス「${prefix || '(なし)'}」を設定しました`;
+      statusElement.className = 'status success';
+
+      // 少し待ってからボタンを元に戻す（ユーザーへのフィードバック用）
+      setTimeout(() => {
+        applyButton.disabled = false;
+        applyButton.textContent = '適用';
+      }, 1000);
+    });
+
+    // Enterキーで適用ボタンをクリック
+    prefixInput.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter' && !applyButton.disabled) {
+        applyButton.click();
+      }
     });
 
     // Figmaから初期メッセージを受け取る
@@ -84,7 +176,12 @@
       if (message.type === 'init') {
         // 保存されたプレフィックスがある場合は設定
         if (message.savedPrefix) {
-          document.getElementById('prefix').value = message.savedPrefix;
+          prefixInput.value = message.savedPrefix;
+          // 例のプレフィックスも更新
+          if (message.savedPrefix) {
+            examplePrefixElement.textContent = message.savedPrefix;
+            exampleElement.style.display = 'block';
+          }
         }
       }
     };
