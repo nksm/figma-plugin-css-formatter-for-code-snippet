@@ -12,6 +12,9 @@
     "dev"
   ],
   "ui": "ui.html",
+  "menu": [
+    {"name": "プレフィックスを設定", "command": "set-prefix"}
+  ],
   "codegenLanguages": [
     {
       "label": "CSS with prefix",

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -63,12 +63,12 @@
 <body>
   <div class="container">
     <div class="input-group">
-      <label for="prefix">CSS	pn��գï�:</label>
-      <input type="text" id="prefix" placeholder="�: app" />
+      <label for="prefix">CSS変数のプレフィックス:</label>
+      <input type="text" id="prefix" placeholder="例: app" />
     </div>
-    <button id="apply">i(</button>
+    <button id="apply">適用</button>
     <div class="footer">
-      CSS	pvar(--color-name, #000)	k�W_��գï����W~Y
+      CSS変数（var(--color-name, #000)）に指定したプレフィックスを追加します
     </div>
   </div>
 
@@ -78,11 +78,11 @@
       parent.postMessage({ pluginMessage: { type: 'apply-prefix', prefix } }, '*');
     });
 
-    // FigmaK��û����Q֋
+    // Figmaから初期メッセージを受け取る
     window.onmessage = (event) => {
       const message = event.data.pluginMessage;
       if (message.type === 'init') {
-        // �XU�_��գï�LB�4o-�
+        // 保存されたプレフィックスがある場合は設定
         if (message.savedPrefix) {
           document.getElementById('prefix').value = message.savedPrefix;
         }
